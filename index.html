@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="first">
+    <input type="text" id="second">
+    <button onclick="(() => {
+        let a = parseInt(document.getElementById('first').value);
+        let b = parseInt(document.getElementById('second').value);
+        if (isNaN(a) || isNaN(b)) {
+            document.getElementById('result').innerText = '결과값: 값을 입력해주세요';
+            return;
+        }
+        const sum = a + b;
+        document.getElementById('result').innerText = `결과값: ${sum}`;
+    })()">더하기</button>
+    <p id="result"></p>
+</body>
+</html>

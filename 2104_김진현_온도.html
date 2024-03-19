@@ -30,7 +30,7 @@
                 if (unit === "celsius") {
                     // 섭씨에서 화씨로 변환
                     result = (temperature * 9 / 5) + 32;
-                    document.getElementById("result").innerHTML = `${temperature}°C = ${result.toFixed(2)}°F`;
+                    document.getElementById("result").innerHTML = `${temperature}°C = ${result.toFixed(0)}°F`;
                 } else {
                     // 화씨에서 섭씨로 변환
                     result = (temperature - 32) * 5 / 9;
