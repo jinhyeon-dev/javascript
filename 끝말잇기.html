@@ -15,21 +15,50 @@
 
     <script>
         const number = Number(prompt("몇명이 참가하세요?"))
-        console.log(typeof (number))
-
-        const onClickButton = () => {
-            console.log('버튼클릭')
-        }
         const $btn = document.querySelector("#btnWorld")
-        console.log($btn)
-        $btn.addEventListener('click', onClickButton)
-
-        const onInput = (event) => {
-            console.log('글자입력', event.target.value)
-        }
         const $input = document.querySelector("#worldRelay")
-        console.log($input)
+        let $world = document.querySelector("#world")
+        // 제시어 저장
+        let world;
+
+        // 새로운 제시어 저장
+        let newWorld;
+
+        // HTML 시작할 때 Input에 포커스 주기
+        $input.focus()
+
+        const onClickButton = () => { 
+            // 제시어가 없을 때 : 첫 번째 사용자가 끝말잇기 게임을 시작할 때
+            if (!world) { // 제시어가 비어 있다.
+
+                // 첫번째 사용자의 입력을 제시어 저장 변수에 할당
+                world = newWorld
+
+                // HTML 제시어 부분에 출력 : <div>
+                $world.textContent = world
+
+                // 입력값 초기화
+                $input.value = ""
+                $input.focus()
+            } else { // 제시어가 비어 있지 않다.
+                if(world[world.length - 1] === newWorld[0]) { // 입력한 단어가 올바른가?
+                    // 올바르다.
+                    world = newWorld // 현재 단어를 제시어에 저장한다.
+                    $world.textContent = world; // 화면에 제시어 표시
+                }
+                else {
+                    // 올바르지 않다.
+                }
+            }
+        }
+        const onInput = () => {
+            console.log('글자입력', event.target.value)
+            newWorld = event.target.value // 입력하는 단어를 현재 단어로
+        }
+
+        $btn.addEventListener('click', onClickButton)
         $input.addEventListener('input', onInput)
+
     </script>
 </body>
 
