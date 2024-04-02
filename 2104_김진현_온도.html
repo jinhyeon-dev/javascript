@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2104_김진현_온도</title>
-    <head>
-        <title>온도 변환기</title>
-    </head>
-    <body>
-        <h1>온도 변환기</h1>
-        <label for="temperature">온도:</label>
-        <input type="number" id="temperature" placeholder="온도 입력">
-        <br>
-        <label for="unit">단위:</label>
-        <select id="unit">
-            <option value="celsius">섭씨</option>
-            <option value="fahrenheit">화씨</option>
-        </select>
-        <br>
-        <button onclick="convertTemperature()">변환</button>
-        <p id="result"></p>
-    
-        <script>
-            function convertTemperature() {
-                const temperature = document.getElementById("temperature").value;
-                const unit = document.getElementById("unit").value;
-                let result;
-    
-                if (unit === "celsius") {
-                    // 섭씨에서 화씨로 변환
-                    result = (temperature * 9 / 5) + 32;
-                    document.getElementById("result").innerHTML = `${temperature}°C = ${result.toFixed(0)}°F`;
-                } else {
-                    // 화씨에서 섭씨로 변환
-                    result = (temperature - 32) * 5 / 9;
-                    document.getElementById("result").innerHTML = `${temperature}°F = ${result.toFixed(2)}°C`;
-                }
+</head>
+
+<body>
+    <p>
+        <input type="text" id="celsius">
+        <button onclick="CelsiusChange()">섭씨변환하기</button>
+    </p>
+    <p>
+        <input type="text" id="fahrenheit">
+        <button onclick="FahrenheitChange()">화씨변환하기</button>
+    </p>
+    <p id="cr">섭씨 ?도를 화씨로 변환하면 ?도이다.</p>
+    <p id="fr">화씨 ?도를 섭씨로 변환하면 ?도이다.</p>
+    <script>
+        function CelsiusChange() {
+            let c = document.getElementById('celsius').value
+            console.log(c)
+            if (c == '') {
+                document.getElementById('cr').innerText = '섭씨 ?도를 화씨로 변환하면 ?도이다.'
             }
-        </script>
-    </body>
+            else {
+                let sum = ((c * 1.8 + 32))
+                document.getElementById('cr').innerText = `섭씨 ${c}도를 화씨로 변환하면 ${sum.toFixed(2)}도이다.`
+            }
+        }
+        function FahrenheitChange() {
+            let f = document.getElementById('fahrenheit').value
+            if (f == '') {
+                document.getElementById('fr').innerText = '화씨 ?도를 섭씨로 변환하면 ?도이다.'
+            }
+            else {
+                let sum = Math.round(((f - 32) / 1.8) * 100) / 100 //여기
+                document.getElementById('fr').innerText = `화씨 ${f}도를 섭씨로 변환하면 ${sum}도이다.`
+            }
+        }
+    </script>
+</body>
+
 </html>
