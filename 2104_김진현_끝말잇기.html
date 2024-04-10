@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>끝 말 잇 기</title>
+    <title>끝말잇기 게임</title>
 </head>
 
 <body>
     <div>라운드<span id="round">1</span></div>
     <div><span id="order">1</span>번째 참가자</div>
-    <div>제시어: <span id="word"></span></div>
+    <div>제시어: <span id="word"></span> | <span id="output"></span></div>
     <input type="text">
     <button>입력</button>
     <script>
@@ -20,34 +19,49 @@
         const $word = document.querySelector('#word')
         const $order = document.querySelector('#order')
         const $round = document.querySelector('#round')
-        let word
-        let newWord
+        const $output = document.querySelector('#output')
+        let word = ''
         let cnt = 1
-        $input.focus();
+        const words = []
+
+        $input.focus()
+
         const onClickButton = () => {
-            if (!word || word[word.length - 1] === newWord[0]) {
-                word = newWord
-                $word.textContent = word
-                const order = Number($order.textContent)
-                if (order + 1 > number) {
-                    $order.textContent = 1
-                    cnt++;
-                    $round.textContent = cnt
-                }
-                else {
-                    $order.textContent = order + 1
-                }
+            const newWord = $input.value.trim()
+
+            if (newWord.length !== 3) {
+                alert('3단어만 입력가능합니다.')
+                $input.value = ''
+                return
             }
-            else {
-                alert('올바르지 않은 단어입니다')
+            if (words.includes(newWord)) {
+                alert('다른 단어를 입력해주세요!')
+                return
             }
+            words.push(newWord)
+
+            word = newWord
+            $word.textContent = word
+
+            const order = Number($order.textContent)
+            if (order + 1 > number) {
+                $order.textContent = 1
+                cnt++
+                $round.textContent = cnt
+            } else {
+                $order.textContent = order + 1
+            }
+
             $input.value = ''
             $input.focus()
+            updateOutput()
         }
         const onInput = (event) => {
-            newWord = event.target.value
+            updateOutput()
         }
-
+        const updateOutput = () => {
+            $output.textContent = words.slice().join(', ')
+        }
         $button.addEventListener('click', onClickButton)
         $input.addEventListener('input', onInput)
         $input.addEventListener('keypress', function (e) {
@@ -56,6 +70,7 @@
                 $button.click()
             }
         })
+
     </script>
 </body>
 

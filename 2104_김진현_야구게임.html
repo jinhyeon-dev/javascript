@@ -19,6 +19,8 @@
 
 <body>
     <form id="form">
+        <h3>시도횟수</h3>
+        <h3 id="attempt"></h3>
         <h3>결과</h3>
         <h2 id="logs"></h2>
         <input type="text" id="input">
@@ -28,6 +30,8 @@
         const $input = document.querySelector('#input')
         const $form = document.querySelector('#form')
         const $logs = document.querySelector('#logs')
+        const $attempt = document.querySelector('#attempt')
+        let cnt = 0;
 
         const numbers = [] //number이라는 배열
         for (let n = 1; n <= 9; n += 1) {
@@ -61,7 +65,6 @@
             const value = $input.value
             $input.value = '' //input값 초기화
             const valid = checkInput(value)
-            tries.push(value)
 
             if (!valid) return;
             if (answer.join('') === value) {
@@ -74,18 +77,21 @@
                 return
             }
 
+            //몇 스트라이크 몇 볼인지 검사
             let strike = 0
             let ball = 0
             for (let i = 0; i < answer.length; i++) {
                 const index = value.indexOf(answer[i])
-                if (index > -1) {
-                    if (index === i) {
+                if (index > -1) { //일치하는 숫자 발견
+                    if (index === i) { //자릿수도 같음
                         strike += 1
-                    } else {
+                    } else { //숫자만 같음
                         ball += 1
                     }
                 }
             }
+            cnt += 1;
+            $attempt.textContent = cnt;
             $logs.append(`${value}: ${strike} 스트라이크 ${ball} 볼`, document.createElement('br'))
             tries.push(value)
         })
