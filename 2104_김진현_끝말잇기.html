@@ -9,7 +9,7 @@
 <body>
     <div>라운드<span id="round">1</span></div>
     <div><span id="order">1</span>번째 참가자</div>
-    <div>제시어: <span id="word"></span> <br> <span id="output"></span></div>
+    <div>제시어: <span id="word"></span> | <span id="output"></span></div>
     <input type="text">
     <button>입력</button>
     <script>
@@ -23,47 +23,21 @@
         let word = ''
         let cnt = 1
         const words = []
-        console.log(words[0])
-        console.log(word[word.length])
 
         $input.focus()
 
         const onClickButton = () => {
             const newWord = $input.value.trim()
 
-            if (newWord.length == 0) {
-                alert('단어를 입력해주세요.')
-                $input.focus()
-                return
-            }
-
-            if (newWord.length == 1) {
-                alert('한글자 이상의 단어를 입력해주세요.')
-                $input.focus()
-                return
-            }
-            
             if (newWord.length !== 3) {
                 alert('3단어만 입력가능합니다.')
                 $input.value = ''
-                $input.focus()
                 return
             }
-
             if (words.includes(newWord)) {
                 alert('다른 단어를 입력해주세요!')
-                $input.value = ''
-                $input.focus()
                 return
             }
-
-            if (word[word.length] != newWord[0]) {
-                alert('잘못된 단어입니다.')
-                $input.value = ''
-                $input.focus()
-                return
-            }
-
             words.push(newWord)
 
             word = newWord
@@ -86,7 +60,7 @@
             updateOutput()
         }
         const updateOutput = () => {
-            $output.textContent = words.slice().join(' -> ')
+            $output.textContent = words.slice().join(', ')
         }
         $button.addEventListener('click', onClickButton)
         $input.addEventListener('input', onInput)
