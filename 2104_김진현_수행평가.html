@@ -1,14 +1,197 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>수행평가</title>
 </head>
-참가자 3명이 참가 입력이 되면 그수 만큼 사용자 이름을 입력받게 끝말잇기 게임을 해서 등수를 3등 2등 1등을 나누게 하고ㅇㅋㅇㅋ
-<body>
 
+<body>
+    <div>라운드<span id="round">1</span></div>
+    <div><span id="order">1</span>번째 참가자</div>
+    <div>제시어: <span id="word"></span></div>
+    <div>입력된 단어: <span id="output"></span></div>
+    <input type="text" id="text">
+    <button id="inputButton">입력</button>
+    <small>시간: <span id="time"></span>초</small>
+    <div id="gameEndMsg" style="display: none;">경기 종료</div>
+    <button id="restartButton" style="display: none;">새로운 게임 시작</button>
+    <div id="setup">
+    </div>
+    <script>
+        const $inputButton = document.querySelector('#inputButton');
+        const $input = document.querySelector('input');
+        const $text = document.querySelector('#text');
+        const $word = document.querySelector('#word');
+        const $order = document.querySelector('#order');
+        const $round = document.querySelector('#round');
+        const $output = document.querySelector('#output');
+        const $time = document.querySelector('#time');
+        const $gameEndMsg = document.querySelector('#gameEndMsg');
+        const $restartButton = document.querySelector('#restartButton');
+        const $setup = document.querySelector('#setup');
+        let number;
+        let timer;
+        let word = '';
+        let cnt = 1;
+        let participants = [];
+        const words = [];
+        const korean = /^[가-힣]*$/;
+
+        $input.focus();
+
+        const startTimer = () => {
+            let timeLeft = 10;
+            $time.textContent = timeLeft;
+            timer = setInterval(() => {
+                timeLeft--;
+                $time.textContent = timeLeft;
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    alert('시간초과!');
+                    endGame();
+                }
+            }, 1000);
+        };
+
+        const endGame = () => {
+            $inputButton.disabled = true;
+            $gameEndMsg.style.display = 'block';
+            $restartButton.style.display = 'block';
+            $text.disabled = true;
+        };
+
+        const resetTimer = () => {
+            clearInterval(timer);
+            startTimer();
+        };
+
+        const resetInput = (message) => {
+            if (message) {
+                alert(message);
+            }
+            $input.value = '';
+            $input.focus();
+        };
+
+        const onClickButton = () => {
+            resetTimer();
+            const newWord = $input.value.trim();
+            const minLength = parseInt(document.querySelector('#minLength').value);
+            if (newWord.length < minLength) {
+                resetInput(`단어는 최소 ${minLength}글자 이상이어야 합니다.`);
+                return;
+            }
+            if (words.includes(newWord)) {
+                resetInput('중복된 단어입니다.');
+                return;
+            }
+            if (!korean.test(newWord)) {
+                resetInput('한글만 입력 가능합니다.');
+                return;
+            }
+            if (word && word[word.length - 1] !== newWord[0]) {
+                resetInput('끝말잇기 규칙에 어긋납니다. 다시 입력해주세요.');
+                return;
+            }
+
+            words.push(newWord);
+            word = newWord;
+            $word.textContent = word;
+
+            const order = Number($order.textContent);
+            if (order + 1 > number) {
+                $order.textContent = 1;
+                cnt++;
+                $round.textContent = cnt;
+            } else {
+                $order.textContent = order + 1;
+            }
+            $input.value = '';
+            $input.focus();
+            updateOutput();
+        };
+
+        const updateOutput = () => {
+            $output.textContent = words.slice().join(' -> ');
+        };
+
+        $inputButton.addEventListener('click', onClickButton);
+        $input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                $inputButton.click();
+            }
+        });
+
+        const initGame = () => {
+            number = parseInt(prompt("몇 명이 참가하시나요?"));
+            if (isNaN(number) || number <= 0) {
+                alert('올바른 숫자를 입력해주세요.');
+                return;
+            }
+
+            $setup.innerHTML = '';
+
+            for (let i = 0; i < number; i++) {
+                const name = document.createElement('input');
+                name.type = 'text';
+                name.placeholder = `참가자 ${i + 1} 이름`;
+                name.id = `participant${i + 1}`;
+                $setup.appendChild(name);
+                $setup.appendChild(document.createElement('br'));
+            }
+
+            const minLeng = document.createElement('input');
+            minLeng.type = 'number';
+            minLeng.placeholder = '단어의 최소 글자수';
+            minLeng.id = 'minLength';
+            $setup.appendChild(minLeng);
+            $setup.appendChild(document.createElement('br'));
+
+            const startButton = document.createElement('button');
+            startButton.textContent = '게임 시작';
+            startButton.id = 'startButton';
+            startButton.addEventListener('click', startGame);
+            $setup.appendChild(startButton);
+        };
+
+        const startGame = () => {
+            participants = [];
+            for (let i = 0; i < number; i++) {
+                const name = document.querySelector(`#participant${i + 1}`).value.trim();
+                if (!name) {
+                    alert('모든 참가자의 이름을 입력해주세요.');
+                    return;
+                }
+                participants.push(name);
+            }
+
+            const minLength = parseInt(document.querySelector('#minLength').value);
+            if (isNaN(minLength) || minLength <= 0) {
+                alert('단어의 최소 글자수를 올바르게 입력해주세요.');
+                return;
+            }
+
+            word = '';
+            cnt = 1;
+            words.length = 0;
+            $word.textContent = '';
+            $order.textContent = '1';
+            $round.textContent = '1';
+            $output.textContent = '';
+            $gameEndMsg.style.display = 'none';
+            $inputButton.disabled = false;
+            $text.disabled = false;
+            $restartButton.style.display = 'none';
+            $setup.innerHTML = '';  // 입력창들과 '게임 시작' 버튼 제거
+            $input.focus();
+            startTimer();
+        };
+
+        $restartButton.addEventListener('click', initGame);
+        initGame();
+    </script>
 </body>
 
 </html>

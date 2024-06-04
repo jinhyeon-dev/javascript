@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>끝말잇기 게임</title>
+    <title>수행평가</title>
 </head>
 
 <body>
     <div>라운드<span id="round">1</span></div>
-    <div><span id="order">1</span>번째 참가자</div>
+    <div><span id="order">1</span>번째 참가자: <span id="person"></span></div>
     <div>제시어: <span id="word"></span></div>
     <div>입력된 단어: <span id="output"></span></div>
     <input type="text" id="text">
@@ -17,6 +17,8 @@
     <small>시간: <span id="time"></span>초</small>
     <div id="gameEndMsg" style="display: none;">경기 종료</div>
     <button id="restartButton" style="display: none;">새로운 게임 시작</button>
+    <div id="setup">
+    </div>
     <script>
         const $inputButton = document.querySelector('#inputButton');
         const $input = document.querySelector('input');
@@ -28,12 +30,15 @@
         const $time = document.querySelector('#time');
         const $gameEndMsg = document.querySelector('#gameEndMsg');
         const $restartButton = document.querySelector('#restartButton');
+        const $setup = document.querySelector('#setup');
+        const $person = document.querySelector('#person');
         let number;
         let timer;
         let word = '';
         let cnt = 1;
+        let people = [];
         const words = [];
-        const korean = /^[가-힣]*$/;
+        const korean = /^[가-힣]*$/; // 정규식
 
         $input.focus();
 
@@ -74,15 +79,16 @@
         const onClickButton = () => {
             resetTimer();
             const newWord = $input.value.trim();
-            // if (newWord.length !== 3) {
-            //     resetInput('3단어만 입력 가능합니다.');
-            //     return;
-            // }
-            if (words.includes(newWord)) {
+            const minLength = parseInt(document.querySelector('#minLength').value);
+            if (newWord.length < minLength) { // 추가기능 구현 - 2 / 1. 단어의 최소 글자수를 입력
+                resetInput(`단어는 최소 ${minLength}글자 이상이어야 합니다.`);
+                return;
+            }
+            if (words.includes(newWord)) { // 중복된 단어
                 resetInput('중복된 단어입니다.');
                 return;
             }
-            if (!korean.test(newWord)) {
+            if (!korean.test(newWord)) { // 한글만 입력 가능
                 resetInput('한글만 입력 가능합니다.');
                 return;
             }
@@ -103,14 +109,15 @@
             } else {
                 $order.textContent = order + 1;
             }
+            $person.textContent = people[Number($order.textContent) - 1];
             $input.value = '';
             $input.focus();
             updateOutput();
         };
 
-
+        const updateOutput = () => {
             $output.textContent = words.slice().join(' -> ');
-
+        };
 
         $inputButton.addEventListener('click', onClickButton);
         $input.addEventListener('keypress', (e) => {
@@ -120,7 +127,56 @@
         });
 
         const initGame = () => {
+            $inputButton.disabled = true;
+            $text.disabled = true;
             number = parseInt(prompt("몇 명이 참가하시나요?"));
+            if (isNaN(number) || number <= 0) {
+                alert('올바른 숫자를 입력해주세요.');
+                return;
+            }
+
+            $setup.innerHTML = '';
+
+            for (let i = 0; i < number; i++) {
+                const name = document.createElement('input');
+                name.type = 'text';
+                name.placeholder = `참가자 ${i + 1} 이름`;
+                name.id = `participant${i + 1}`;
+                $setup.appendChild(name);
+                $setup.appendChild(document.createElement('br'));
+            }
+
+            const minLeng = document.createElement('input');
+            minLeng.type = 'number';
+            minLeng.placeholder = '단어의 최소 글자수';
+            minLeng.id = 'minLength';
+            $setup.appendChild(minLeng);
+            $setup.appendChild(document.createElement('br'));
+
+            const startButton = document.createElement('button');
+            startButton.textContent = '게임 시작';
+            startButton.addEventListener('click', startGame);
+            $setup.appendChild(startButton);
+        };
+
+        const startGame = () => {
+            people = [];
+            for (let i = 0; i < number; i++) {
+                const name = document.querySelector(`#participant${i + 1}`).value.trim();
+                if (!name) {
+                    alert('모든 참가자의 이름을 입력해주세요.');
+                    return;
+                }
+                people.push(name);
+            }
+
+            const minLength = parseInt(document.querySelector('#minLength').value);
+            if (isNaN(minLength) || minLength <= 0) {
+                alert('단어의 최소 글자수를 올바르게 입력해주세요.');
+                console.log("넌 왜 뭐가 문젠데 안되는건데", $output.textContent); 
+                return;
+            }
+
             word = '';
             cnt = 1;
             words.length = 0;
@@ -131,12 +187,17 @@
             $gameEndMsg.style.display = 'none';
             $inputButton.disabled = false;
             $text.disabled = false;
+            $person.textContent = people[0];
             $restartButton.style.display = 'none';
             $input.focus();
             startTimer();
         };
 
-        $restartButton.addEventListener('click', initGame);
+        $restartButton.addEventListener('click', () => {
+            $restartButton.style.display = 'none';
+            initGame();
+        });
+
         initGame();
     </script>
 </body>
