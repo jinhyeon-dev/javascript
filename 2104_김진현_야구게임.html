@@ -80,16 +80,6 @@
             //몇 스트라이크 몇 볼인지 검사
             let strike = 0
             let ball = 0
-            // for (let i = 0; i < answer.length; i++) {
-            //     const index = value.indexOf(answer[i])
-            //     if (index > -1) { //일치하는 숫자 발견
-            //         if (index === i) { //자릿수도 같음
-            //             strike += 1
-            //         } else { //숫자만 같음
-            //             ball += 1
-            //         }
-            //     }
-            // }
             answer.forEach((number, aIndex) => {
                 const index = value.indexOf(String(number));
                 if(index > -1) { // 일치하는 숫자 발견
